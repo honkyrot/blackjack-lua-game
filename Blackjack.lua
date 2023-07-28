@@ -17,7 +17,7 @@ OOP version with classes i guess.
 
 Blackjack = {}
 
-function Blackjack:start_game()
+function Blackjack:start_game()  --start game function and metatable.
     local game = {}
     setmetatable(game, self)
     self.__index = self
@@ -30,7 +30,7 @@ function Blackjack:start_game()
     return game
 end
 
-function Blackjack:create_deck() -- creates the deck with 52 cards
+function Blackjack:create_deck() -- creates the deck with 52 cards with for loops
     local short_general_deck = {"Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"}
     for _ = 1,4 do
         for _, card in ipairs(short_general_deck) do
@@ -39,7 +39,7 @@ function Blackjack:create_deck() -- creates the deck with 52 cards
     end
 end
 
-function Blackjack:shuffle_deck() -- Fisher-Yates shuffle
+function Blackjack:shuffle_deck() -- Fisher-Yates shuffle method
     for i = 1, #self.current_deck do
         local e = math.random(1, #self.current_deck)
         self.current_deck[i], self.current_deck[e] = self.current_deck[e], self.current_deck[i]
@@ -48,7 +48,7 @@ end
 
 function Blackjack:deal_card(player, output) -- deals 1 card from the deck
     is_player = false
-    if player == "player" then
+    if player == "player" then  -- checks which turn
         player = self.player_hand
         is_player = true
     elseif player == "dealer" then
@@ -60,28 +60,28 @@ function Blackjack:deal_card(player, output) -- deals 1 card from the deck
     local card = table.remove(self.current_deck, 1)
 --    print("Dealt " .. card)--debug
     table.insert(player, card)
-    if is_player and output then
+    if is_player and output then  -- output
         print("You were dealt a " .. card)
         print()  --Blank prints for new lines
     end
     return card
 end
 
-function table.clone(org)  --quick way to clone a table
+function table.clone(org)  -- quick way to clone a table
     return {table.unpack(org)}
 end
 
-function Blackjack:read_cards(player)  --Print out the cards in the player's hand
+function Blackjack:read_cards(player)  -- Print out the cards in the player's hand
     if player == "player" then
         player = self.player_hand
         print("Your hand:")
         for _, card in ipairs(player) do
             print(card)
         end
-    elseif player == "dealer" then --Dealer has their first card hidden
-        temp_hand = table.clone(self.dealer_hand)
+    elseif player == "dealer" then -- Print out the dealers hand, with the first card hidden.
+        temp_hand = table.clone(self.dealer_hand)  --use a temporary table
         print("Dealer's hand is currently showing:")
-        table.remove(temp_hand, 1)
+        table.remove(temp_hand, 1) 
         for _, card in ipairs(temp_hand) do
             print(card)
         end
@@ -100,7 +100,7 @@ function Blackjack:calculate_score(player) -- calculates the score of the player
     end
 
     local score = 0
-    local ace_count = 0
+    local ace_count = 0  -- count aces
     for _, card in ipairs(player) do -- count the aces first and then add the rest
         if card == "Ace" then
             ace_count = ace_count + 1
@@ -113,7 +113,7 @@ function Blackjack:calculate_score(player) -- calculates the score of the player
 
     if ace_count > 0 then -- if there are aces in the hand
         for _ = 1, ace_count do
-            if score + 11 > 21 then
+            if score + 11 > 21 then  -- do soft or hard aces
                 score = score + 1
             else
                 score = score + 11
@@ -185,7 +185,7 @@ function get_user_input_as_y_or_n(message) -- gets user input to turn into true 
     end
 end
 
-function player_action()
+function player_action()  -- start player acton input with io.
     while true do
         print("What would you like to do?", "Your total: "..game.player_score)
         print("[1] Hit")
@@ -222,13 +222,14 @@ function static_win_end_check()  --display end game message, stats, and asks to 
     end
 end
 
-user_start = get_user_input_as_y_or_n("Do you want to play a game of Blackjack? (y/n)")
+-- start thread here
+user_start = get_user_input_as_y_or_n("Do you want to play a game of Blackjack? (y/n)")  -- ask if they want to play.
 if user_start then
     print("Welcome to blackjack!")
     local active = true
     local games_played = 0
-    while active do
-        print()
+    while active do  -- loop for the game
+        print()  -- empty line
         games_played = games_played + 1
         print("Game "..games_played)
         game = Blackjack:start_game()
@@ -246,7 +247,7 @@ if user_start then
         game:read_cards("player")
         print()
         game:read_cards("dealer")
-        while true do
+        while true do  -- loop for playing cards
             print()
             player_input = player_action()
             if player_input == "hit" then
